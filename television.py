@@ -1,14 +1,14 @@
-#usr/python3
 
 #Imports
 import Vuer 
 from vuer.schemas import Hands, ImageBackground
+from pyngrok import ngrok
 import numpy as np
 from multiprocessing import Array, shared_memory, Process
 import time
 import asyncio
 
-class VRInteraction:
+class JointTracking:
     '''
     The purpose of this class is to track the position of both hands and the neck 
     (i.e. the camera movement) in VR. 
@@ -24,7 +24,7 @@ class VRInteraction:
         self.right_landmarks_pos = Array('d', 16, lock=True)
 
         #Image Parameters (Oculus)
-        self.img_shape = (480, 640*2, 3)  #change?
+        self.img_shape = JointTracking.image_specs[0]  #change?
 
         #Enable usage from remote area or local
         if ngrok:
@@ -34,9 +34,12 @@ class VRInteraction:
 
         #Event Handlers, updates shared memory constantly
         self.vuer.add_handler("HAND_MOVE")(self.hands_motion)
-        self.vuer.add_handler("HEAD_MOVE")(self.head_motion)
+        self.vuer.add_handler("CAMERA_MOVE")(self.head_motion)
 
-
+        #shared memory
+        existing_shm = shared_memory.SharedMemory(name=JointTracking.image_specs[2])
+        #always use binocular vision
+        self.vuer.spawn(start=False)(self.main_image)
 
         #Run process
         self.Process = Process(target=self.run)
@@ -47,10 +50,16 @@ class VRInteraction:
     def run(self):
         self.vuer.run()
 
+    #create a shared memory & other image specs
     def image_specs():
-        shm = shared_memory.SharedMemory(create=True, size=np.prod(self.img_shape)*np.uint8().itemsize)
+        img_shape = (480, 640*2, 3)
+        shm = shared_memory.SharedMemory(create=True, size=np.prod(JointTracking.img_shape)*np.uint8().itemsize)
+        shm_name = shm.name
+        img_array = np.ndarray(img_shape, dtype=np.uint8, buffer=shm.buf)
 
-    #Get VR Image
+        return np.array([img_shape, shm, shm_name, img_array])
+
+    #VR Image
     async def main_image(self, session, fps=60):
         session.upsert(
             Hands(
@@ -121,7 +130,7 @@ class VRInteraction:
 
 if __name__ == '__main__':
 
-    VR_Interact = VRInteraction(cert_file="../cert.pem", key_file="../key.pem") #what else do we need here
+    VR_Interact = JointTracking(cert_file="../cert.pem", key_file="../key.pem") #what else do we need here
     #Run constantly 
     while True:
-        time.sleep(0.05) #how fast we want to gather VR joint data
+        time.sleep(0.05) #how fast we want to gather hand joint data

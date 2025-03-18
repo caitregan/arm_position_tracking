@@ -18,9 +18,6 @@ hand_to_Inspire = np.array([[0, -1, 0, 0],
                            [0, 0, 0, 1]])
 
 
-
-
-
 #Check if matrix is invertible
 def mat_update(prev_mat, mat):
     if np.linalg.det(mat) == 0:

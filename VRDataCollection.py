@@ -1,17 +1,17 @@
 
 #Imports 
-from television import VRInteraction
+from television import JointTracking
 import numpy as np
-from HelperCalculationFunctions import mat_update, fast_mat_inv, mat_y_to_z_up
+from HelperCalculationFunctions import *
 
-class VRDataOuput:
+class ChangeOfBasis:
     """
     Class where we explicitly find matricies of desired joints and change 
     the basis to be in the correct frame.
     
     """
     def __init__(self):
-        self.tv = VRInteraction(self, )
+        self.tv = JointTracking()
 
         #Default matricies 
         self.vuer_head_mat = np.array([[1, 0, 0, 0],
@@ -44,7 +44,7 @@ class VRDataOuput:
         rel_right_wrist_mat[0:3, 3] = rel_right_wrist_mat[0:3, 3] - head_mat[0:3, 3]
 
         #Similarly, find finger positions within Inspire coordinate frame
-        left_fingers_mat = np.concatenate([self.tv.left_landmarks_pos.copy().T, np.ones((1, self.tv.left_landmarks_pos.shape[0]))])
+        left_fingers_mat = np.concatenate([self.tv.left_landmarks_pos.copy().T, np.ones((1, self.tv.left_landmarks.shape[0]))])
         right_fingers_mat = np.concatenate([self.tv.right_landmarks_pos.copy().T, np.ones((1, self.tv.right_landmarks_pos.shape[0]))])
 
         rel_left_fingers = fast_mat_inv(left_wrist_mat) @ left_fingers_mat
