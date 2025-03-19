@@ -52,9 +52,11 @@ class JointTracking:
         #self.process.daemon = True
         #self.process.start()
 
-        self.thread = Thread(target=self.run)
-        self.thread.daemon = True
-        self.thread.start()
+        #self.thread = Thread(target=self.run)
+        #self.thread.daemon = True
+        #self.thread.start()
+
+        self.vuer.run()
 
     #Start Process
     def run(self):
@@ -113,7 +115,7 @@ class JointTracking:
             await asyncio.sleep(0.016*2)
 
     #Gathers hand positions asynchronously
-    async def hands_motion(self,event,session):
+    async def hands_motion(self,event,session,fps=60):
         print("hand motion running")
         try:
             print("Recived hand motion event: ", event.value)
@@ -125,7 +127,7 @@ class JointTracking:
             pass
     
     #Gathers head/camera position asynchronously
-    async def head_motion(self,event,session):
+    async def head_motion(self,event,session,fps=60):
         try:
             print("Recived camera move event: ", event.value)
             self.head_pos[:] = event.value["camera"]["matrix"]
