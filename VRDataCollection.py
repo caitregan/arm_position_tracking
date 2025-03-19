@@ -11,7 +11,8 @@ class ChangeOfBasis:
     
     """
     def __init__(self):
-        self.tv = JointTracking()
+        #self.tv = JointTracking(cert_file="../cert.pem", key_file="../key.pem", use_ngrok=False)
+        self.tv = JointTracking(cert_file=r"C:\Users\caitl\arm_position_tracking\cert.pem", key_file=r"C:\Users\caitl\arm_position_tracking\key.pem", use_ngrok=False)
 
         #Default matricies 
         self.vuer_head_mat = np.array([[1, 0, 0, 0],
