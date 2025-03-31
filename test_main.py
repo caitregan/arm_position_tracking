@@ -7,7 +7,9 @@ import time
 
 if __name__ == '__main__':
     COB = ChangeOfBasis()
-    JT = JointTracking(cert_file=r"C:\Users\caitl\arm_position_tracking\cert.pem", key_file=r"C:\Users\caitl\arm_position_tracking\key.pem", use_ngrok=False)
+    #JT = JointTracking(cert_file=r"C:\Users\caitl\arm_position_tracking\cert.pem", key_file=r"C:\Users\caitl\arm_position_tracking\key.pem", use_ngrok=False)
+    JT = JointTracking(cert_file="cert.pem", key_file="key.pem", use_ngrok=False)
+
     while True:
         #head_matrix, left_wrist_matrix, right_wrist_matrix, left_fingers_matrix, right_fingers_matrix = COB.get_data()
         head_matrix = JT.head()

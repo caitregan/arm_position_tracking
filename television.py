@@ -41,6 +41,7 @@ class JointTracking:
         #Event Handlers, updates shared memory constantly
         self.vuer.add_handler("HAND_MOVE")(self.hands_motion)
         self.vuer.add_handler("CAMERA_MOVE")(self.head_motion)
+        self.vuer.add_handler("connect")(self.on_connect)
 
         #shared memory
         existing_shm = shared_memory.SharedMemory(name=shm_name)
@@ -113,6 +114,9 @@ class JointTracking:
                 to="bgChildren",
             )
             await asyncio.sleep(0.016*2)
+
+    async def on_connect(self, event, session):
+        print("A client connected!")
 
     #Gathers hand positions asynchronously
     async def hands_motion(self,event,session,fps=60):
