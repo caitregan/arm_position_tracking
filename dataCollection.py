@@ -6,13 +6,15 @@ import numpy as np
 import time
 import tensorflow as tf
 import tensorflow_datasets as tfds
+import os
 
 #where we save logs
 log_directory = r"C:\Users\caitl\arm_position_tracking\logs"
+os.makedirs(log_directory, exist_ok=True)
 
 #input desired values to record in an episode here
 def step_fn(timestep, action, env):
-    physics = env.physics
+    physics = env.physics  #doesnt work on prelimary run, should work for our environment since it has a .physics attribute
     joint_names = physics.model.body_names
     joint_positions = {
         name: physics.named.data.xpos[name].tolist() for name in joint_names
@@ -34,7 +36,7 @@ def episode_fn(timestep, action, env):
         }
     return None
 
-#write in what my policy needs
+#write in what my policy needs, add onto this later
 def policy(timestep):
     obs = timestep.observation
     return obs
@@ -52,10 +54,10 @@ dataset_config = tfds.rlds.rlds_base.DatasetConfig(
 env = catch_env.Catch()
 with envlogger.EnvLogger(
     env,
+    step_fn = step_fn,
+    episode_fn = episode_fn,
     backend = tfds_backend_writer.TFDSBackendWriter(
         data_directory = log_directory,
-        step_fn = step_fn,
-        episode_fn = episode_fn,
         ds_config = dataset_config),
 ) as env: #interact with env here
     timestep = env.reset()

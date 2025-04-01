@@ -1,6 +1,10 @@
 
 #Imports
+<<<<<<< Updated upstream
 from vuer import Vuer
+=======
+import vuer 
+>>>>>>> Stashed changes
 from vuer.schemas import Hands, ImageBackground
 from pyngrok import ngrok
 import numpy as np
@@ -15,8 +19,12 @@ class JointTracking:
     (i.e. the camera movement) in VR. 
     
     '''
+<<<<<<< Updated upstream
     #def __init__(self, cert_file, key_file, use_ngrok=False):
     def __init__(self, cert_file, key_file, use_ngrok=False):
+=======
+    def __init__(self, cert_file, key_file, use_ngrok=True):
+>>>>>>> Stashed changes
         #Initialize positions to be locked
         self.left_hand_pos = Array('d', 16, lock=True)
         self.right_hand_pos = Array('d', 16, lock=True)
@@ -26,6 +34,7 @@ class JointTracking:
         self.right_landmarks_pos = Array('d', 75, lock=True)
 
         #Image Parameters (Oculus)
+<<<<<<< Updated upstream
         img_shape, shm, shm_name, img_array = JointTracking.image_specs()
         self.img_shape = img_shape #change?
         self.img_array = img_array
@@ -37,6 +46,17 @@ class JointTracking:
         else:
             self.vuer = Vuer(host='0.0.0.0', port=8012, cert=cert_file, key=key_file, queries=dict(grid=False, hands=True), queue_len=3)
             #self.vuer = Vuer(host='0.0.0.0', port=8012, queries=dict(grid=False), queue_len=3)
+=======
+        img_shape, shm, shm_name, img_array = JointTracking.image_specs()  #change?
+        self.img_shape = img_shape
+
+        #Enable usage from remote area or local
+        if use_ngrok:
+            #self.vuer = Vuer(host='0.0.0.0', queries=dict(grid=False), queue_len=3)
+            self.vuer = Vuer(host='0.0.0.0', port=8012, queries=dict(grid=False), queue_len=3)
+        else:
+            self.vuer = Vuer(host='0.0.0.0', port=8012, cert=cert_file, key=key_file, queries=dict(grid=False), queue_len=3)
+>>>>>>> Stashed changes
 
         #Event Handlers, updates shared memory constantly
         self.vuer.add_handler("HAND_MOVE")(self.hands_motion)
@@ -44,11 +64,16 @@ class JointTracking:
         self.vuer.add_handler("connect")(self.on_connect)
 
         #shared memory
+<<<<<<< Updated upstream
         existing_shm = shared_memory.SharedMemory(name=shm_name)
+=======
+        #existing_shm = shared_memory.SharedMemory(name=self.shm_name)
+>>>>>>> Stashed changes
         #always use binocular vision
         self.vuer.spawn(start=False)(self.main_image)
 
         #Run process
+<<<<<<< Updated upstream
         #self.process = Process(target=self.run)
         #self.process.daemon = True
         #self.process.start()
@@ -58,6 +83,11 @@ class JointTracking:
         #self.thread.start()
 
         self.vuer.run()
+=======
+        self.process = Process(target=self.run)
+        self.process.daemon = True
+        self.process.start()
+>>>>>>> Stashed changes
 
     #Start Process
     def run(self):
